@@ -1,0 +1,128 @@
+{
+  "version": "2.0",
+  "trained_at": "2026-09-28T17:43:18.588111+00:00",
+  "dataset": "Kaggle / EMSCAD real and fake job postings",
+  "source": {
+    "source": "Kaggle: Real / Fake Job Posting Prediction (shivamb)",
+    "url": "https://www.kaggle.com/datasets/shivamb/real-or-fake-fake-jobposting-prediction",
+    "download_endpoint": "https://www.kaggle.com/api/v1/datasets/download/shivamb/real-or-fake-fake-jobposting-prediction",
+    "downloaded_utc": "2026-09-28",
+    "sha256": "59253295129d8b6a27607f9904f7d4ddf4dbb0ee35e079c7eb51b58b5e62bf60",
+    "rows": 17880,
+    "fraud_rows": 866,
+    "note": "Fresh download replaces the repeated-template data included in the original project. Raw rows are used for academic model development, not proof that a new job is legitimate."
+  },
+  "raw_rows": 17880,
+  "usable_rows": 17369,
+  "removed_rows": 511,
+  "conflicting_input_groups_removed": 0,
+  "unique_descriptions": 14442,
+  "splits": {
+    "train": {
+      "total": 10421,
+      "fraud": 512,
+      "genuine": 9909
+    },
+    "validation": {
+      "total": 3474,
+      "fraud": 170,
+      "genuine": 3304
+    },
+    "test": {
+      "total": 3474,
+      "fraud": 171,
+      "genuine": 3303
+    }
+  },
+  "method": "Stratified group splits using normalized description. Approx. 60/20/20; actual sizes shown. TF-IDF fitted only on training. Balanced class weights. Threshold and champion selected only on validation F1. No oversampling.",
+  "leakage_check": {
+    "identical_description_group_overlap": 0,
+    "note": "Exact normalized description groups do not cross splits. This does not exclude all near-duplicate/company overlap."
+  },
+  "champion": "logistic_regression",
+  "metrics": {
+    "logistic_regression": {
+      "threshold": 0.55,
+      "validation": {
+        "precision": 0.81757,
+        "recall": 0.71176,
+        "f1": 0.76101,
+        "accuracy": 0.97812,
+        "average_precision": 0.84463,
+        "roc_auc": 0.9806,
+        "confusion_matrix": [
+          [
+            3277,
+            27
+          ],
+          [
+            49,
+            121
+          ]
+        ]
+      },
+      "test": {
+        "precision": 0.77966,
+        "recall": 0.80702,
+        "f1": 0.7931,
+        "accuracy": 0.97927,
+        "average_precision": 0.86778,
+        "roc_auc": 0.9692,
+        "confusion_matrix": [
+          [
+            3264,
+            39
+          ],
+          [
+            33,
+            138
+          ]
+        ]
+      }
+    },
+    "random_forest": {
+      "threshold": 0.25,
+      "validation": {
+        "precision": 0.76056,
+        "recall": 0.63529,
+        "f1": 0.69231,
+        "accuracy": 0.97237,
+        "average_precision": 0.77885,
+        "roc_auc": 0.97672,
+        "confusion_matrix": [
+          [
+            3270,
+            34
+          ],
+          [
+            62,
+            108
+          ]
+        ]
+      },
+      "test": {
+        "precision": 0.78808,
+        "recall": 0.69591,
+        "f1": 0.73913,
+        "accuracy": 0.97582,
+        "average_precision": 0.81902,
+        "roc_auc": 0.97336,
+        "confusion_matrix": [
+          [
+            3271,
+            32
+          ],
+          [
+            52,
+            119
+          ]
+        ]
+      }
+    }
+  },
+  "sklearn_version": "1.8.0",
+  "python_version": "3.12.14",
+  "features": 20000,
+  "elapsed_seconds": 54.55,
+  "limitations": "Historical English job-posting data; test scores describe this held-out sample, not current-world guarantees. Hybrid rule scores are not calibrated probabilities."
+}

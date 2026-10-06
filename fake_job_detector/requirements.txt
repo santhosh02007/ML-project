@@ -1,7 +1,11 @@
-pandas>=2.0.0
-numpy>=1.24.0
-scikit-learn>=1.3.0
-joblib>=1.3.0
-matplotlib>=3.7.0
-seaborn>=0.12.0
-nltk>=3.8.0
+# Python 3.11-3.13; Python 3.12 recommended.
+# Keep scikit-learn identical to the bundled model's training version.
+fastapi==0.115.6
+uvicorn==0.34.0
+python-multipart==0.0.20
+pydantic==2.13.5
+scikit-learn==1.8.0
+numpy==2.3.5
+scipy==1.17.0
+pandas==2.2.3
+joblib==1.5.3

@@ -1,0 +1,10 @@
+{
+  "source": "Kaggle: Real / Fake Job Posting Prediction (shivamb)",
+  "url": "https://www.kaggle.com/datasets/shivamb/real-or-fake-fake-jobposting-prediction",
+  "download_endpoint": "https://www.kaggle.com/api/v1/datasets/download/shivamb/real-or-fake-fake-jobposting-prediction",
+  "downloaded_utc": "2026-09-28",
+  "sha256": "59253295129d8b6a27607f9904f7d4ddf4dbb0ee35e079c7eb51b58b5e62bf60",
+  "rows": 17880,
+  "fraud_rows": 866,
+  "note": "Fresh download replaces the repeated-template data included in the original project. Raw rows are used for academic model development, not proof that a new job is legitimate."
+}

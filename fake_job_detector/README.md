@@ -1,199 +1,105 @@
-# Veritas Shield: Fake Job Posting & Recruitment Scam Detection Platform
+# Veritas · Fake Job Detector
 
-> **A Real-Time, Explainable, Multi-Layer Recruitment Fraud Detection & MLOps Platform**  
-> Combining Machine Learning Classification, Context-Aware Rule Engines, Salary Anomaly Analysis, Domain & Email Verification, Campaign Clustering, and Continuous Retraining.
+**ML PBL project:** Fake Job Posting and Recruitment Scam Detection Using Machine Learning and Natural Language Processing.
 
----
+A local Python web application that checks job-posting text using TF-IDF, Logistic Regression, Random Forest and clearly labelled scam-warning rules. It helps a person decide what to investigate; it does not prove whether a job is genuine.
 
-## 1. Problem Statement & Motivation
+**ML team from the supplied poster:** V Santhosh (210425205179), Ramsankar A (210425205129). CIT Chennai · 2026–27.
 
-Online recruitment fraud has surged into a multi-billion dollar illicit industry. Deceptive threat actors exploit vulnerable jobseekers through:
-- **Upfront Fee Extortion**: Requiring "refundable" registration fees, training charges, or home-office laptop deposits.
-- **Check-Cashing Overpayment Schemes**: Mailing fraudulent cashier checks and demanding wire transfers before the check bounces.
-- **Brand Impersonation**: Claiming to represent Fortune 500 enterprises (Google, Microsoft, Amazon, Stripe) while communicating from public webmail accounts (`@gmail.com`) or lookalike domains (`@microsofft-careers.xyz`).
-- **Phishing for Sensitive PII**: Harvesting Aadhaar, PAN, Net Banking logins, and OTPs under the guise of "pre-employment background screening."
+## Start on Windows
 
-### Why Existing Single-Model ML Approaches Fall Short
-Standard baseline approaches rely solely on `Text Preprocessing → TF-IDF → Logistic Regression / Random Forest`. These baseline models fail in real-world recruitment defense because:
-1. **Black-Box Probabilities**: They output a generic probability without explaining *why* a posting is dangerous or providing candidate guidance.
-2. **False Positives on Anti-Scam Disclaimers**: Genuine corporate job postings that state *"We never ask for registration fees; beware of scammers"* are falsely flagged as fraud by naive keyword or bag-of-words models.
-3. **Blind to Metadata & Cyber Signals**: Text-only models ignore mismatched email domains, plain HTTP protocols, raw IP URLs, suspicious `.xyz/.top` TLDs, and excessive salary inflation.
-4. **Data Drift & Syndicated Variants**: Threat actors constantly rephrase scam text to evade static vocabularies.
+1. Install **64-bit Python 3.12** and select **Add Python to PATH**. Python 3.11–3.13 is supported by the setup script; this release was tested on Python 3.12.
+2. Extract the entire ZIP. Open the `FakeJobDetector` folder. Do not run inside the ZIP.
+3. Double-click **SETUP_WINDOWS.bat** once. Internet is required to download the Python packages.
+4. Double-click **START_WINDOWS.bat**. Keep the terminal open.
+5. After the server says `Application startup complete`, open **http://127.0.0.1:8000** in Chrome, Edge or Firefox. Start with **Demo Lab**.
+6. Press Ctrl+C in the terminal to stop the server.
 
----
+The trained models are included. **No dataset download, retraining, Node.js, account or API key is needed to demonstrate the project.** Once dependencies are installed, the application works offline. A browser refresh does not erase saved history.
 
-## 2. Core Architecture & Multi-Layer Risk Engine
+If several Python versions are installed and the setup script selects an unsupported version, run the following commands in this project folder using Python 3.12:
 
-Veritas Shield addresses these shortcomings by unifying 7 distinct detection layers into an explainable 0–100 Risk Scorecard:
-
-```
-Job Posting Data
-  │
-  ├── 1. Text ML Classifier (TF-IDF + Logistic Regression / Random Forest, 30% weight)
-  ├── 2. Weighted Domain Rule Engine (Upfront Fees, Check Scams, PII Demands, 30% weight)
-  ├── 3. Anti-Scam Disclaimer Negation Engine (Distinguishes Warnings from Fee Demands)
-  ├── 4. Company & Email Domain Verifier (Detects Free Webmail & Enterprise Impersonation, 20% weight)
-  ├── 5. URL & Cybersecurity Analyzer (HTTP, Raw IP Hosts, Suspicious TLDs, Shorteners, 15% weight)
-  ├── 6. Salary Anomaly Detector (Extracts compensation and compares to empirical role medians, 5% weight)
-  └── 7. Campaign Duplicate Detector (TF-IDF Cosine Similarity against known syndicated fraud clusters)
-  │
-  ▼
-Calibrated 0–100 Risk Score & Explainable Output
-  ├── Risk Tier: Low (0-30), Medium (31-60), High (61-100)
-  ├── Per-Layer Risk Factor Breakdown with Verbatim Evidence Snippets
-  └── Hedged Actionable Safety Recommendations for Candidates
+```bat
+py -3.12 -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+.venv\Scripts\python.exe run.py
 ```
 
----
+## macOS / Linux
 
-## 3. Dataset & Resampling Discipline
-
-- **Dataset**: Kaggle EMSCAD Recruitment Fraud Dataset (~17,880 labeled job postings, ~4.8% baseline fraud rate).
-- **Split Strategy**: 70% Train, 15% Validation, 15% Test.
-- **Stratification & Leakage Prevention**: Stratified splitting was performed **strictly before** any resampling, ensuring zero data leakage into the evaluation sets.
-- **Training Resampling**: The training split was resampled to a **70% Genuine / 30% Fraudulent** distribution, enabling the model to learn subtle fraud indicators while retaining genuine text patterns.
-- **Objective Evaluation**: Models are evaluated on **both** the balanced validation set and the untouched real-world test set (~4.8% fraud distribution).
-
-### Objective Model Benchmark (Headline Metrics on Test Set)
-
-| Metric | TF-IDF + Logistic Regression (Champion) | TF-IDF + Random Forest | Importance |
-|---|---|---|---|
-| **Fraud Recall (Headline)** | **1.0000** | **1.0000** | **Critical** — False negatives leave jobseekers unprotected |
-| **Fraud Precision** | **1.0000** | **1.0000** | High — Avoids unnecessary candidate friction |
-| **Fraud F1-Score (Headline)** | **1.0000** | **1.0000** | **Critical** — Harmonic mean on minority fraud class |
-| **ROC-AUC** | **1.0000** | **1.0000** | Global discriminative capability |
-| **PR-AUC** | **1.0000** | **1.0000** | Area under precision-recall curve on imbalanced data |
-| **Accuracy** | **1.0000** | **1.0000** | Baseline correctness across all records |
-
----
-
-## 4. NLP Preprocessing & Fraud Token Preservation
-
-Standard NLP pipelines aggressively strip domain words as stopwords. Veritas Shield explicitly preserves all fraud-critical tokens:
-- `['fee', 'fees', 'deposit', 'urgent', 'guaranteed', 'bank', 'verification', 'training', 'telegram', 'whatsapp', 'wire', 'crypto', 'bitcoin', 'check', 'cashier', 'reimburse', 'otp', 'aadhaar', 'pan', 'upi', 'pin', 'payment', 'pay', 'charge', 'daily', 'weekly', 'bonus', 'interview', 'immediate', 'start', 'today', 'no', 'never', 'not', 'without']`
-
----
-
-## 5. Context-Aware Anti-Scam Disclaimer Negation
-
-To eliminate false positive flags on legitimate job postings containing anti-scam warnings, the engine applies windowed regex context parsing:
-- **Scam Request**: *"Candidates must pay a $150 registration fee before starting work"* &rarr; **Rule Triggers (+40 risk points)**.
-- **Legitimate Warning**: *"We never ask for any registration fee or deposit at any recruitment stage"* &rarr; **Negation Engine intercepts match, sets disclaimer flag, and reduces risk score to 0**.
-
----
-
-## 6. Continuous Learning & Feedback Loop
-
-1. **Candidate Reporting**: Candidates can report deceptive postings via `POST /api/report-job`.
-2. **Admin Verification Queue**: Reports enter a staging queue with `pending` status. Admins review and mark them as `verified_fraud`, `verified_genuine`, or `rejected`.
-3. **No Direct Auto-Training**: Prevents adversarial data poisoning.
-4. **Automated Retraining**: Admins trigger `POST /api/admin/retrain`. The pipeline retrains the models on the expanded dataset, compares metrics against the active champion, and promotes to `v2` only if Fraud F1/Recall improves.
-
----
-
-## 7. Real-World Test Scenarios
-
-The test suite validates 7 mandatory real-world scenarios:
-1. **Scenario 1 (Genuine Corporate Job)**: AWS Senior Software Engineer with `@amazon.com` &rarr; **Low Risk (<30)**.
-2. **Scenario 2 (Registration Fee Scam)**: Work from home typing requiring $150 registration fee &rarr; **High Risk (>60)**.
-3. **Scenario 3 (Unrealistic Salary Anomaly)**: Data entry typing claiming $500/day ($150,000/yr) with zero experience &rarr; **Medium/High Risk (>40)**.
-4. **Scenario 4 (Enterprise Brand Impersonation)**: Claiming Microsoft but email is `@gmail.com` and interview is Telegram-only &rarr; **High Risk (>60)**.
-5. **Scenario 5 (Rephrased Scam Wording)**: "Refundable financial verification check before interview" &rarr; **Flagged (>50)**.
-6. **Scenario 6 (Anti-Scam Disclaimer)**: Stripe posting with *"we never ask for fees"* &rarr; **Not falsely flagged (<30)**.
-7. **Scenario 7 (Tamil-English Code-Mixed Scam)**: *"Veettil irundhe sambalam daily 3000 rs joining fee kattavum send otp"* &rarr; **Flagged (>40)**.
-
----
-
-## 8. Installation, Setup & Quickstart
-
-### Prerequisites
-- Python 3.10+
-- Node.js 18+ (for frontend development)
-
-### 1. Clone & Install Backend Dependencies
-```bash
-cd fake_job_detector
-pip install -r requirements.txt
-pip install fastapi uvicorn pydantic sqlalchemy python-multipart pytest requests
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python run.py
 ```
 
-### 2. Run Test Suite
-```bash
-python run_tests_direct.py
+Open http://127.0.0.1:8000. Later, `sh start.sh` starts the same environment.
+
+## Five screens
+
+- **Job inspector:** enter a title and description, optionally add company, email, URL, salary and extra job details. See the concern index, both model scores, direct warning phrases, domain checks and LR word contributions. Save locally or analyze without saving. Download JSON or use Print / save PDF.
+- **Batch analysis:** download the sample CSV, upload up to 100 rows, see valid and invalid rows separately, then export results. Valid analyses are saved to history. Limit: 2 MB, UTF-8; `title` and `description` columns are required. Quote fields containing commas or line breaks.
+- **History & review:** search and filter saved analyses, reopen complete results, export the filtered list, and add one human review with a reason. A review never changes the original model output and does not retrain a model.
+- **Model lab:** compare precision, recall, F1, accuracy, average precision and confusion matrices on validation or test data. See the actual split sizes and evaluation limitations.
+- **Demo Lab:** run five prepared examples through the real models and rules. They cover ordinary wording, upfront fees, OTP/PIN requests, protective warnings and a mixed warning/payment demand. Demo runs do not fill history.
+
+## Measured ML results
+
+The raw Kaggle / EMSCAD file has 17,880 rows. After removing short/unusable and repeated full-text inputs, 17,369 rows remain. Identical normalized description groups stay together, giving 10,421 training, 3,474 validation and 3,474 test rows. The vocabulary is fitted only on training data. Balanced class weights address class imbalance. Thresholds and the primary model are chosen using validation F1, not test results.
+
+| Model | Test fraud precision | Test fraud recall | Test fraud F1 | Decision threshold |
+| --- | ---: | ---: | ---: | ---: |
+| Logistic Regression (primary) | 77.97% | 80.70% | 79.31% | 0.55 |
+| Random Forest | 78.81% | 69.59% | 73.91% | 0.25 |
+
+The test set has 3,303 genuine postings and 171 frauds. LR correctly detects 138 frauds, misses 33 and flags 39 genuine postings. **Do not present this project as 100% accurate.** Metrics above measure the two ML models, not the combined heuristic concern index. See `models/metrics.json` and `reports/split_membership.csv`.
+
+The original project's repeated-template dataset and inconsistent model bundles were replaced by a fresh copy of the referenced public dataset and reproducibly trained models. Do not combine old model files or old accuracy claims with this release.
+
+## Retrain (optional)
+
+```sh
+python train.py
 ```
 
-### 3. Start the FastAPI Production Server
-```bash
-python -m uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8000
-```
-Open your browser at **`http://localhost:8000`** to access the complete application UI.
+Use the project environment's Python. The script reads the included `data/fake_job_postings.csv`, rebuilds `models/bundle.joblib`, `models/metrics.json`, and `reports/split_membership.csv`. Stop the application before training; restart afterwards. Training uses a fixed random seed and 20,000 TF-IDF features. Timings may differ by computer. Only load trusted local joblib models: that format can execute code when loaded.
 
-### 4. Optional: Run React Frontend with Vite Dev Server
-```bash
-cd frontend
-npm install
-npm run dev
+## Tests
+
+```sh
+python -m pip install -r requirements-dev.txt
+python -m pytest tests -q
 ```
 
-### 5. Docker Deployment
-```bash
-docker-compose up --build
-```
+Run from the project folder with the project environment active, or replace `python` with `.venv\Scripts\python.exe` on Windows / `.venv/bin/python` on Linux. Tests use temporary databases and the actual models. See `TEST_REPORT.md` for checks performed on this release.
 
----
+## Storage and privacy
 
-## 9. Transparent Claims Policy & Known Limitations
+Analyses and review notes are stored in `runtime/history.sqlite3`, created at first start. Treat that file as personal data. Text is processed locally; no external AI, company registry or URL-fetch service is called. Some numeric ID/OTP/password patterns are masked before saving, but redaction is incomplete. Do not enter real secrets. Job text, contact email and company details may remain in stored records. Exported files contain the selected analysis information.
 
-> [!WARNING]
-> **Claims Policy**: Veritas Shield is an explainable **decision-support tool**, not an infallible authority. The system never claims *"100% accurate," "detects every scam,"* or *"definitely genuine."* Outputs use calibrated risk tiers: *"Low Risk (Likely Genuine)"*, *"Medium Risk (Suspicious / Flag for Review)"*, and *"High Risk (Likely Fraudulent)"*.
+This is a **single-user local demonstration** bound to `127.0.0.1`. It has no user accounts, authentication, institutional roles or tamper-proof audit system. Do not expose the server to a public network. Completed reviews are locked in the UI/API to preserve the initial decision; the local database owner still controls the data. To start with empty demo history, stop the application and move `runtime/history.sqlite3` to a backup location.
 
-### Known Limitations & Upgrade Path
-1. **Dataset Staleness**: Public datasets like Kaggle EMSCAD reflect historical scam formats; emerging threats (such as AI-generated voice cloning interviews) require continuous retraining.
-2. **External Reputation APIs**: Full domain and URL age verification benefits from live external APIs (VirusTotal, Google Safe Browsing, WHOIS). When unconfigured, the system gracefully falls back to local deterministic heuristics.
-3. **Multilingual / Code-Mixed Dialects**: Tamil-English and code-mixed scams are detected via regex heuristics in v2.0; the future upgrade path includes fine-tuned multilingual Sentence-BERT (`paraphrase-multilingual-MiniLM-L12-v2`) embeddings.
+## Limitations
 
----
+- Historical, mainly English job-posting data cannot guarantee performance on current postings. Exact description duplicates are separated by group; near-duplicates and company overlap may remain.
+- Rules can miss indirect requests, sarcasm, negation and new scams. A small number of romanized Tamil payment phrases are recognised by rules; this is **not** a Tamil-language ML model.
+- Matching email/website domains do not prove ownership. No company existence, live reputation or company registry verification is performed.
+- Salary checks use narrow illustrative thresholds, not a live salary database. The index is not a calibrated fraud probability.
+- Word contributions explain Logistic Regression only. No SBERT, BERT, LIME, SHAP, browser extension or automatic retraining is implemented.
 
-## 10. Project Structure
+## Troubleshooting
 
-```
-fake_job_detector/
-├── backend/
-│   ├── app/
-│   │   ├── config.py             # Settings, paths, thresholds, env vars
-│   │   ├── database.py           # SQLAlchemy database schema & sessions
-│   │   ├── schemas.py            # Pydantic request/response validation
-│   │   ├── main.py               # FastAPI entrypoint, CORS, static mounts
-│   │   ├── routers/
-│   │   │   ├── analyze.py        # Single & Batch analyze endpoints
-│   │   │   ├── reports.py        # User reporting & admin verification
-│   │   │   ├── models.py         # Model info, comparison, retrain pipeline
-│   │   │   └── dashboard.py      # Telemetry stats & threat insights
-│   │   ├── services/
-│   │   │   ├── risk_engine.py    # Multi-layer score aggregator & explainability
-│   │   │   ├── rule_engine.py    # Weighted scam triggers + negation engine
-│   │   │   ├── salary_analyzer.py# Empirical salary anomaly detection
-│   │   │   ├── url_analyzer.py   # URL heuristics & reputation provider
-│   │   │   ├── company_verifier.py# Brand impersonation & email domain check
-│   │   │   ├── campaign_detector.py# TF-IDF cosine similarity duplicate detector
-│   │   │   └── security.py       # PII scrubbing (Aadhaar, PAN, Card, OTP)
-│   │   └── ml/
-│   │       ├── preprocessor.py   # Text cleaner with preserved fraud tokens
-│   │       ├── trainer.py        # Stratified 70/30 split & ML model trainer
-│   │       ├── evaluator.py      # Precision/Recall/F1/ROC-AUC reporting
-│   │       └── inference.py      # High-performance inference runner
-├── frontend/                     # React + Vite + Modern CSS
-│   ├── src/
-│   │   ├── components/           # Navbar, RiskGauge, SignalCards, EvidenceHighlighter
-│   │   ├── pages/                # InspectorView, BatchView, AnalyticsView, AdminView
-│   │   ├── services/api.js       # REST API client
-│   │   └── index.css             # Glassmorphism & Cyber-Defense theme
-├── tests/                        # Full automated test suite (Unit, Scenario, API)
-├── data/                         # Kaggle EMSCAD fake job postings dataset
-├── models/                       # Persisted joblib models & training metadata
-├── reports/figures/              # Generated confusion matrix heatmaps
-├── Dockerfile & docker-compose.yml
-├── .env.example
-├── architecture_and_api_docs.md
-└── README.md
-```
+- **Server cannot be reached:** keep the terminal open, wait for startup, and use `http://127.0.0.1:8000` (not a local HTML file).
+- **Port 8000 in use:** close the other server, or Windows `set PORT=8001` / Linux `PORT=8001 .venv/bin/python run.py`. Open the matching port.
+- **Missing packages:** rerun setup in the extracted project folder. Do not mix global Python with the project environment.
+- **Model version warning:** reinstall the pinned requirements; bundled models use scikit-learn 1.8.0.
+- **Missing models:** restore the complete ZIP or run `train.py` in the configured environment.
+- **History save error:** ensure the extracted folder is writable and the disk has space. Do not launch from a read-only archive.
+
+## Project layout
+
+`run.py` starts the server; `veritas/server.py` defines API routes; `veritas/engine.py` runs models and rules; `veritas/storage.py` manages SQLite; `veritas/text.py` shares preprocessing with training; `veritas/samples.py` contains demo inputs; `static/` contains the responsive interface; `models/` contains fitted models and measured results; `data/` contains the training data and provenance; `tests/` contains integration checks.
+
+## Data attribution
+
+Source: [Real / Fake Job Posting Prediction, shivamb, Kaggle](https://www.kaggle.com/datasets/shivamb/real-or-fake-fake-jobposting-prediction), commonly described as the EMSCAD job-posting corpus. Source URL and SHA-256 are recorded in `data/provenance.json`. The dataset contains historical, user-submitted postings; labels are used for academic evaluation, not a current employer blacklist. Original dataset rights and terms remain with their respective owners.
